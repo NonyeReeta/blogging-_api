@@ -1,4 +1,19 @@
+require('dotenv').config()
 const express = require('express')
-require('dotenv').config
+const {connectToDb} = require("./db")
 
-const PORT =    process.env.PORT
+const app = express()
+const PORT = process.env.PORT || 8080
+
+//  CONNECTING TO DATABASE INSTANCE
+connectToDb()
+
+app.use(express.json())
+
+app.get('/',(req, res, next) => {
+    res.send('home page')
+})
+
+app.listen(PORT, () => {
+    console.log(`server listening on port ${PORT}`)
+});
