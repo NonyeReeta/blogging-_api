@@ -30,6 +30,15 @@ app.use('/', articleRoute)
 app.set('views', 'views');
 app.set('view engine', 'ejs');
 
+// renders the login page
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+// renders the signup page
+app.get('/signup', (req, res) => {
+    res.render('signup');
+});
 
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`)

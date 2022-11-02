@@ -7,10 +7,17 @@
         <title>Title of article</title>
       </head> 
       <body>
-        <h1>title of article</h1>
-        <h3>author</h3><span>published date</span>
-        <h5>5mins read</h5>
-        <h5>100 views</h5>
-        <h6>body all content</h6>
+        <% if (user) { %>
+          <h2>Welcome <%= user.firstname %> </h2>
+          <% } else { %>
+            <p></p>
+        <% } %>
+          <h1>TITLE: <%= content.title %></h1>
+          <h3><%= content.author %></h3>
+          <span>published: <%= content.timestamp %></span>
+          <h5>5mins read</h5>
+          <h5>100 reads</h5>
+          <h6><%= content.body %></h6>
+          
       </body> 
 </html>

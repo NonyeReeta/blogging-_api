@@ -7,10 +7,27 @@
         <title>Nonye's Blog Api</title>
       </head> 
       <body>
-        <h1>title</h1>
-        <h3>author</h3><span>published date</span>
-        <h5>5mins read</h5>
-        <h5>100 reads</h5>
-        <h6>body (show a few lines like 5)</h6>
+        <header>
+          <h2><a href="/login">Login</a> or <a href="/signup">signup</a> to create an article</h2>
+
+        </header>
+        <% if (user) { %>
+          <h2>Welcome <%= user.firstname %> </h2>
+          <h3>View all created <a href="/userarticles">blogs</a></h3>
+          <% } else { %>
+            <p></p>
+        <% } %>
+
+        <% contents.forEach(function(content) { %>
+          <a href="/<%= content.title %>" style="color:darkgreen; cursor: pointer;">
+            <h1>TITLE: <%= content.title %></h1>
+          </a>
+          <h3><%= content.author %></h3>
+          <span>published: <%= content.timestamp %></span>
+          <h5>5mins read</h5>
+          <h5>100 reads</h5>
+          <h6><%= content.body %></h6>
+          
+          <% }); %>
       </body> 
 </html>
