@@ -7,7 +7,7 @@ const articleModel = new Schema({
 title:{
     type: String,
     required: true,
-    unique: true,
+    unique:[ true, 'Article with this title already exists']
 },
 description: {
     type: String,
@@ -21,6 +21,7 @@ state: {
 },
 read_count: {
     type: Number,
+    default: 0,
 },
 reading_time: {
     type: Number,

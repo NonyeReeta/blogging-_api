@@ -24,7 +24,9 @@ articleRoute.get('/:title', (req, res) => {
         res.status(500).send(err.message)});
    
 })
-articleRoute.get('/user/articles', (req, res) => {
+articleRoute.get('/:user/articles', (req, res) => {
+    const email = req.params.email
+    
     res.send('articles by a particular user')
 })
 
