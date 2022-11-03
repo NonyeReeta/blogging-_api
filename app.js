@@ -25,7 +25,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', authRouter);
 app.use('/create', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('/edit', passport.authenticate('jwt', { session: false }), articleRoute)
-app.use('/', articleRoute)
+app.use('/delete', passport.authenticate('jwt', { session: false }), articleRoute)
+app.use('/articles', articleRoute)
 
 app.set('views', 'views');
 app.set('view engine', 'ejs');
@@ -39,6 +40,11 @@ app.get('/login', (req, res) => {
 app.get('/signup', (req, res) => {
     res.render('signup');
 });
+// render home page
+app.get('/', (req, res) => {
+    res.render('home')
+})
+
 
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`)

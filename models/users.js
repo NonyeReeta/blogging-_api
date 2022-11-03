@@ -7,17 +7,28 @@ const UserSchema = new Schema({
 email:{
     type: String,
     required: true,
-    unique: [true, 'user already exists']
-},
-firstName:{
-    type: String,
-},
-lastName: {
-        type: String,
+    unique: [true, 'user already exists'],
+    lowercase:true,
+    trim: true,
 },
 password:{
     type: String,
+    required: true,
 },
+firstName:{
+    type: String,
+    required: true,
+    trim: true
+},
+lastName: {
+    type: String,
+    required: true,
+    trim: true
+},
+SignUpDate: {
+     type: Date, 
+     default: Date.now 
+    },
 })
 
 // HASHING AND VALIDATION OF PASSWORD
@@ -25,7 +36,8 @@ UserSchema.pre(
     'save',
     async function (next) {
         const user = this;
-        const hash = await bcrypt.hash(this.password, 10);
+        // console.log(user)
+        const hash = await bcrypt.hash(user.password, 10);
 
         this.password = hash;
         next();

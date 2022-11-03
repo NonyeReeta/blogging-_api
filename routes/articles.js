@@ -11,7 +11,7 @@ articleRoute.get('/', (req, res) => {
         res.status(500).send(err.message)
     })
 })
-articleRoute.get('/:title', (req, res) => {
+articleRoute.get('/article/:title', (req, res) => {
     const title = req.params.title
     // FIND AND RETURN ARTICLE WITH TITLE
 
@@ -26,21 +26,19 @@ articleRoute.get('/:title', (req, res) => {
    
 })
 articleRoute.get('/:user/articles', (req, res) => {
-    const email = req.params.email
     
     res.render('userarticles')
 })
 
 articleRoute.post('/create', (req, res) => {
     const article = req.body
+    res.render('create')
     articleModel.create(article)
-    .then(() => {
-res.status(201).send({message: "article created successfully",data:article})
+    .then((article) => {
     })
     .catch((err) => {
 res.status(500).send(err.message)
     })
-    // res.render('create')
 
 })
 

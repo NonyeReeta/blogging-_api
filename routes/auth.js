@@ -8,6 +8,7 @@ const authRouter = express.Router();
 authRouter.post(
     '/signup',
     passport.authenticate('signup', { session: false }), async (req, res, next) => {
+        // console.log(req.user)
         res.json({
             message: 'Signup successful',
             user: req.user
