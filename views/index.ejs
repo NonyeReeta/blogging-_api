@@ -13,7 +13,8 @@
         </header>
         <% if (user) { %>
           <h2>Welcome <%= user.firstName %> </h2>
-          <h3>View all created <a href="/<%= user.firstName %>articles">blogs</a></h3>
+          <h3>View all created <a href="/<%= user.email %>/articles">blogs</a></h3>
+          <h3>Create an article <a href="/<%= user.email %>/create">Here</a></h3>
           <% } else { %>
             <p></p>
         <% } %>

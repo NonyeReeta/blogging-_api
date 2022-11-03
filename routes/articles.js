@@ -22,19 +22,31 @@ articleRoute.get('/article/:title', (req, res) => {
     })
     .catch(err => {
         res.status(500).send(err.message)});
-        // res.render('article')
    
 })
-articleRoute.get('/:user/articles', (req, res) => {
-    
-    res.render('userarticles')
+articleRoute.get('/:email/articles', (req, res) => {
+    const email = req.params.user
+    articleModel.find({})
+    .then((articles) => {
+console.log(articles)
+// TODO: FILTER ALL ARTICLES AND RETURN ARTICLES BY USER WITH EMAIL ADDRESS THEN RENDER PAGE
+        // res.render('../views/userarticles', {contents:articles, user:req.user})
+    }).catch((err) => {
+        console.log(err)
+        res.status(500).send(err.message)
+    })
+   
 })
 
-articleRoute.post('/create', (req, res) => {
+articleRoute.post('/:email/create', (req, res) => {
     const article = req.body
-    res.render('create')
+
+
+
+    
     articleModel.create(article)
-    .then((article) => {
+    .then(() => {
+        res.render('../views/create')
     })
     .catch((err) => {
 res.status(500).send(err.message)

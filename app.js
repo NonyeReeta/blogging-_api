@@ -1,13 +1,11 @@
 require('dotenv').config()
 const express = require('express')
 const {connectToDb} = require("./db")
-const ArticleRoute = require("./routes/articles")
 const authRouter = require("./routes/auth")
 const passport = require('passport')
 // const connectEnsureLogins = require('connect-ensure-login')
 const bodyParser = require('body-parser')
 // const session = require('express-session')
-const userModel = require('./models/users')
 const articleRoute = require('./routes/articles')
 
 
@@ -23,10 +21,12 @@ connectToDb()
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', authRouter);
-app.use('/create', passport.authenticate('jwt', { session: false }), articleRoute)
-app.use('/edit', passport.authenticate('jwt', { session: false }), articleRoute)
-app.use('/delete', passport.authenticate('jwt', { session: false }), articleRoute)
+app.use('/:email/create', passport.authenticate('jwt', { session: true }), articleRoute)
+app.use('/:email/edit', passport.authenticate('jwt', { session: true }), articleRoute)
+app.use('/delete', passport.authenticate('jwt', { session: true }), articleRoute)
 app.use('/articles', articleRoute)
+app.use('/', articleRoute)
+
 
 app.set('views', 'views');
 app.set('view engine', 'ejs');
