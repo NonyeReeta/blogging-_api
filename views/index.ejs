@@ -12,8 +12,8 @@
 
         </header>
         <% if (user) { %>
-          <h2>Welcome <%= user.firstname %> </h2>
-          <h3>View all created <a href="/userarticles">blogs</a></h3>
+          <h2>Welcome <%= user.firstName %> </h2>
+          <h3>View all created <a href="/<%= user.firstName %>articles">blogs</a></h3>
           <% } else { %>
             <p></p>
         <% } %>
