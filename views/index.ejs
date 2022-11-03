@@ -13,21 +13,22 @@
         </header>
         <% if (user) { %>
           <h2>Welcome <%= user.firstName %> </h2>
-          <h3>View all created <a href="/<%= user.email %>/articles">blogs</a></h3>
-          <h3>Create an article <a href="/<%= user.email %>/create">Here</a></h3>
+          <!-- <h4>Here is your token: <%= token %></h4> -->
+          <h3>View all created <a href="<%= user.email %>/articles">blogs</a></h3>
+          <h3>Create an article <a href="articles/<%= user.email %>/create?secret_token=<%= token %>">Here</a></h3>
           <% } else { %>
             <p></p>
         <% } %>
 
         <% contents.forEach(function(content) { %>
-          <a href="article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">
+          <a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">
             <h1>TITLE: <%= content.title %></h1>
           </a>
           <h3><%= content.author %></h3>
           <span>published: <%= content.timestamp %></span>
-          <h5>5mins read</h5>
-          <h5>100 reads</h5>
-          <h6><%= content.body %></h6>
+          <h5><%= content.reading_time %> read.</h5>
+          <h5><%= content.read_count %> views</h5>
+          <h4><%= content.body %></h4>
           
           <% }); %>
       </body> 

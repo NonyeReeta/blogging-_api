@@ -44,7 +44,7 @@ authRouter.post(
 
                         articleModel.find({})
                         .then((articles) => {
-                            res.render('../views/index', {contents:articles, user:req.user})
+                            res.render('../views/index', {contents:articles, user:req.user, token:token})
                         }).catch((err) => {
                             console.log(err)
                             res.status(500).send(err.message)

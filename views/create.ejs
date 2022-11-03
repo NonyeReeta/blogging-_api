@@ -7,12 +7,18 @@
         <title>Add a blog post</title>
     </head>
     <body>
-        <form action="/create" method="post">
+        <form method="post">
             <h3>Title</h3>
-            <input type="text" name="title" placeholder="Blog Title" required />
+            <input type="text" name="title" placeholder="Article Title" required />
+            <br></br>
+            <h3>Description</h3>
+            <input type="text" name="description" placeholder="Describe the article" required />
             <br></br>
             <h3>Body</h3>
-            <input type="text" name="body" placeholder="Blog Body" required />
+            <input type="text" name="body" placeholder="Article Body" required />
+            <br></br>
+            <h3>Tags</h3>
+            <input type="text" name="tags" placeholder="eg: nodejs, react, python" required />
             <br></br>
             <button type="submit">Add</button>
         </form>

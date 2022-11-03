@@ -1,5 +1,6 @@
 const express = require('express')
 const articleModel = require('../models/articles')
+const userModel = require('../models/users')
 const articleRoute = express.Router()
 
 articleRoute.get('/', (req, res) => {
@@ -38,19 +39,34 @@ console.log(articles)
    
 })
 
+
 articleRoute.post('/:email/create', (req, res) => {
-    const article = req.body
+    const blogDetails = req.body
+    const user = req.params.email
+    userModel.findOne({email: user})
+    .then((user) => {
+    const {email, firstName, lastName} = user
+    const {title, description, body, tags} = blogDetails
+    // function to calculate reading time
+    const wordsPerMinute = 183
+    const bodyLength = body.split(' ').length;
+    const readingTime = Math.ceil(bodyLength / wordsPerMinute)
 
-
-
-    
-    articleModel.create(article)
+    articleModel.create({email: email, tags: tags, author: firstName + ' ' + lastName, description: description, body: body, title: title, reading_time: readingTime})
     .then(() => {
-        res.render('../views/create')
+// TODO: RENDER INDEX FOR NOW BUT IT SHOULD ROUTE TP USER RTICLES PAGE
+       res.status(200).send('Article created successfully')
+    }).catch((err) => {
+        res.status(500).send(err.message)
     })
-    .catch((err) => {
-res.status(500).send(err.message)
-    })
+    }).catch((err) => {
+        res.status(500).send(err.message)
+    });
+})
+
+articleRoute.get('/:email/create', (req, res) => {
+    const userEmail = req.params.email
+    res.render('../views/create', {email: userEmail})
 
 })
 
