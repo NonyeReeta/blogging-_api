@@ -11,10 +11,25 @@ authRouter.post(
     '/signup',
     passport.authenticate('signup', { session: false }), async (req, res, next) => {
         // console.log(req.user)
-        res.json({
-            message: 'Signup successful',
-            user: req.user
-        });
+        // res.json({
+        //     message: 'Signup successful',
+        //     user: req.user
+        // });
+        const body = { _id: req.user._id, email: req.user.email };
+        let token = jwt.sign({ user: body }, process.env.JWT_SECRET, {expiresIn: '3600s'});
+        articleModel.find({})
+        .then((articles) => {
+            // return only published articles
+            const publishedArticles = articles.filter((article) => {
+                return article.state === 'published'
+            }) 
+
+            res.render('../views/index', {contents:publishedArticles, user:req.user, token:token})
+        }).catch((err) => {
+            console.log(err)
+            res.status(500).send(err.message)
+        })
+
     }
 );
 
@@ -44,13 +59,15 @@ authRouter.post(
 
                         articleModel.find({})
                         .then((articles) => {
-                            res.render('../views/index', {contents:articles, user:req.user, token:token})
+                            // return only published articles
+                            const publishedArticles = articles.filter((article) => {
+                                return article.state === 'published'
+                            }) 
+                            res.render('../views/index', {contents:publishedArticles, user:req.user, token:token})
                         }).catch((err) => {
                             console.log(err)
                             res.status(500).send(err.message)
                         })
-
-                        // return res.json({ token });
                     }
                 );
             } catch (error) {

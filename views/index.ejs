@@ -19,17 +19,25 @@
             <p></p>
         <% } %>
 
-        <% contents.forEach(function(content) { %>
-          <a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">
-            <h1>TITLE: <%= content.title %></h1>
-          </a>
-          <h3><%= content.author %></h3>
-          <span>published: <%= content.timestamp %></span>
-          <h5><%= content.reading_time %> min read.</h5>
-          <h5><%= content.read_count %> views</h5>
-          <h5 style="text-decoration: underline; "><%= content.description %></h5>
-          <h4><%= content.body.split(' ').slice(0, 20).join(' ') %><span>...</span><a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">read more</a></a></h4>
-          
-          <% }); %>
+        <% if (Object.keys(contents).length > 0 ) { %>
+          <% contents.forEach(function(content) { %>
+            <a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">
+              <h1>TITLE: <%= content.title %></h1>
+            </a>
+            <h3><%= content.author %></h3>
+            <span>published: <%= content.timestamp %></span>
+            <h5><%= content.reading_time %> min read.</h5>
+            <h5><%= content.read_count %> views</h5>
+            <h5 style="text-decoration: underline; "><%= content.description %></h5>
+            <h4><%= content.body.split(' ').slice(0, 20).join(' ') %><span>...</span><a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">read more</a></a></h4>
+            
+            <% }); %>
+          <% } else { %>
+            <h3 style="color:crimson">There are currently no published articles</h3>
+        <% } %>
+
+
+
+        
       </body> 
 </html>

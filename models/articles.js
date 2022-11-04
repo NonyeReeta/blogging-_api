@@ -36,7 +36,13 @@ tags: {
 timestamp: {
     type:Date,
     default: Date.now,
+},
+email: {
+    type: String,
 }
 })
+
+articleModel.index({author: 'text', title: 'text', tags: 'text'})
+
 
 module.exports = mongoose.model('articles', articleModel)

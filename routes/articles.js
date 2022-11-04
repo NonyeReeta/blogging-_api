@@ -4,9 +4,14 @@ const userModel = require('../models/users')
 const articleRoute = express.Router()
 
 articleRoute.get('/', (req, res) => {
-    articleModel.find({})
+    articleModel.find({}).limit(20).skip(20 * 1)
     .then((articles) => {
-        res.render('../views/index', {contents:articles, user:req.user})
+// return only published articles
+    const publishedArticles = articles.filter((article) => {
+        return article.state === 'published'
+    }) 
+    // console.log(publishedArticles)
+    res.render('../views/index', {contents:publishedArticles, user:req.user})
     }).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
@@ -19,9 +24,7 @@ articleRoute.get('/article/:title', (req, res) => {
     articleModel.findOne({title: title})
     .then((article) =>{
         const currentReadCount = article.read_count
-        console.log(currentReadCount)
         const newReadCount = currentReadCount + 1
-        console.log(newReadCount)
         article.read_count = newReadCount
         article.save()
         .then((savedArticle) => {
@@ -35,17 +38,89 @@ articleRoute.get('/article/:title', (req, res) => {
         res.status(500).send(err.message)});
 })
 
-articleRoute.get('/:email/user-page', (req, res) => {
-    articleModel.find({})
+articleRoute.get('/search/:arg', (req, res) => {
+    const arg = req.params.arg
+    articleModel.find({$text: {$search: arg}})
     .then((articles) => {
-console.log(articles)
+        res.status(200).send(articles)
+    }).catch(err => {
+        res.status(500).send(err.message)
+    })
+})
+
+articleRoute.get('/sort/read_count', (req, res) => {
+    articleModel.find({}).sort({read_count : 1})
+    .then((articles) => {
+        res.status(200).send(articles)
+    }).catch(err => {
+        res.status(500).send(err.message)
+    })
+})
+
+articleRoute.get('/sort/reading_time', (req, res) => {
+    articleModel.find({}).sort({reading_time : 1})
+    .then((articles) => {
+        res.status(200).send(articles)
+    }).catch(err => {
+        res.status(500).send(err.message)
+    })
+})
+
+articleRoute.get('/sort/timestamp', (req, res) => {
+    articleModel.find({}).sort({timestamp : 1})
+    .then((articles) => {
+        res.status(200).send(articles)
+    }).catch(err => {
+        res.status(500).send(err.message)
+    })
+})
+
+articleRoute.get('/:email/user-page', (req, res) => {
+const userEmail = req.params.email
+    articleModel.find({}).limit(20).skip(20 * 1)
+    .then((articles) => {
 // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES BY USER WITH EMAIL ADDRESS THEN RENDER PAGE
-        res.render('../views/userarticles', {contents:articles, user:req.user})
+const userArticles = articles.filter((article) => {
+    return article.email === userEmail
+}) 
+res.render('../views/userarticles', {contents:userArticles})
     }).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
     })
 })
+
+articleRoute.get('/:email/user-page/draft', (req, res) => {
+    const state = 'draft'
+        articleModel.find({})
+        .then((articles) => {
+    // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES STATE
+    const userDraftArticles = articles.filter((article) => {
+        return article.state === state
+    }) 
+    res.render('../views/userarticles', {contents:userDraftArticles})
+        }).catch((err) => {
+            console.log(err)
+            res.status(500).send(err.message)
+        })
+    })
+
+articleRoute.get('/:email/user-page/published', (req, res) => {
+        const state = 'published'
+            articleModel.find({})
+            .then((articles) => {
+        // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES STATE
+        const userPublishedArticles = articles.filter((article) => {
+            return article.state === state
+        }) 
+        res.render('../views/userarticles', {contents:userPublishedArticles})
+            }).catch((err) => {
+                console.log(err)
+                res.status(500).send(err.message)
+            })
+        })
+
+
 
 articleRoute.post('/:email/create', (req, res) => {
     const blogDetails = req.body
@@ -77,37 +152,62 @@ articleRoute.get('/:email/create', (req, res) => {
 
 })
 
-articleRoute.get('/:email/edit', (req, res) => {
-    const userEmail = req.params.email
-    res.render('../views/edit')
-
+articleRoute.get('/:email/:title/edit', (req, res) => {
+    const title = req.params.title
+articleModel.findOne({title: title})
+.then((article) => {
+    res.render('../views/edit', {content:article})
+})
+.catch(err => res.status(500).send(err.message))
 })
 
-articleRoute.put('/edit/:title', (req, res) => {
+articleRoute.post('/:email/:title/edit', (req, res) => {
+// console.log('got to edit post')
+const title = req.params.title
 
-    // res.render('edit')
+articleModel.findOne({title: title})
+    .then((article) =>{
+        article.title = req.body.title
+        article.description = req.body.description
+        article.body = req.body.body
+        article.tags = req.body.tags
+        article.save()
+        .then((updatedArticle) => {
+            res.render('../views/article', {content:updatedArticle, user:req.user})
+
+        }).catch(err => {
+            res.status(500).send(err.message,'count update failed')
+        })
+    })
+    .catch(err => {
+        res.status(500).send(err.message)});
 });
 
-articleRoute.put('/state/:title', (req, res) => {
+articleRoute.get('/:email/state/:title', (req, res) => {
     const title = req.params.title
-    articleModel.findOneAndUpdate({title: title})
+    // console.log('got to state')
+    articleModel.findOne({title: title})
     .then((article) =>{
         article.state = "published"
-        console.log(article)
-        res.status(200).send("state changed successfully")
+        article.save()
+        .then((savedArticle) => {
+            res.render('../views/article', {content:savedArticle, user:req.user})
+        }).catch(err => {
+            res.status(500).send('count update failed')
+        })
     })
     .catch(err => {
         res.status(500).send(err.message)});
 })
 
-articleRoute.delete('/delete/:title', (req, res) => {
+articleRoute.get('/:email/:title/delete', (req, res) => {
     const title = req.params.title
-    articleModel.findOneAndDelete(title)
+    articleModel.findOneAndDelete({title: title})
     .then(() =>{
         res.status(200).send("delete successful")
     })
     .catch(err => {
         res.status(500).send(err.message)});
-        // res.render('index')
     })
+
 module.exports = articleRoute

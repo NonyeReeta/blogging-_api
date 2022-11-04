@@ -7,9 +7,15 @@
         <title>Nonye's Blog Api</title>
       </head> 
       <body>
-       <form>
-        <input type="text" name="username" placeholder="article.title" required></input>
-        <input type="text" name="username" placeholder="article.body" required></input>
+       <form method="post">
+        <input type="text" name="title" placeholder="<%= content.title %>" size="20" style="height: 20px;" required></input>
+        <br></br>
+        <input type="text" name="description" placeholder="<%= content.description %>" size="50" style="height: 30px;" required></input>
+        <br></br>
+        <input type="text" name="body" placeholder="<%= content.body %>" size="100" required style="height: 50px;"></input>
+        <br></br>
+        <input type="text" name="tags" placeholder="<%= content.tags %>" size="20" style="height: 20px;" required></input>
+        <br></br>
         <button type="submit">Update</button>
        </form>
        </body>
