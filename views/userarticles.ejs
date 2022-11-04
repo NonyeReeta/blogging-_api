@@ -7,10 +7,17 @@
         <title>User page </title>
       </head> 
       <body>
-        <h1>title</h1>
-        <h3>author</h3><span>published date</span>
-        <h5>5mins read</h5>
-        <h5>100 reads</h5>
-        <h6>body (show a few lines like 5)</h6>
+        <% contents.forEach(function(content) { %>
+          <a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">
+            <h1>TITLE: <%= content.title %></h1>
+          </a>
+          <h3><%= content.author %></h3>
+          <span>published: <%= content.timestamp %></span>
+          <h5><%= content.reading_time %> read.</h5>
+          <h5><%= content.read_count %> views</h5>
+          <h5 style="text-decoration: underline; "><%= content.description %></h5>
+          <h4><%= content.body.split(' ').slice(0, 20).join(' ') %><span>...</span><a href="articles/article/<%= content.title %>" style="color:darkgreen; cursor: pointer;">read more</a></a></h4>
+          
+          <% }); %>
       </body> 
 </html>

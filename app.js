@@ -43,8 +43,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', authRouter);
 app.use('articles/:email/create', passport.authenticate('jwt', { session: false }), articleRoute)
-app.use('/:email/edit', passport.authenticate('jwt', { session: false }), articleRoute)
-// app.use('/delete', passport.authenticate('jwt', { session: true }), articleRoute)
+app.use('articles/:email/edit', passport.authenticate('jwt', { session: false }), articleRoute)
+app.use('articles/:email/user-page', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('/articles', articleRoute)
 
 

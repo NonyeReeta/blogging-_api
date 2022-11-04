@@ -12,33 +12,40 @@ articleRoute.get('/', (req, res) => {
         res.status(500).send(err.message)
     })
 })
+
 articleRoute.get('/article/:title', (req, res) => {
     const title = req.params.title
-    // FIND AND RETURN ARTICLE WITH TITLE
-
+    // FIND, UPDATE AND RETURN ARTICLE WITH TITLE
     articleModel.findOne({title: title})
     .then((article) =>{
-        res.render('../views/article', {content:article, user:req.user})
+        const currentReadCount = article.read_count
+        console.log(currentReadCount)
+        const newReadCount = currentReadCount + 1
+        console.log(newReadCount)
+        article.read_count = newReadCount
+        article.save()
+        .then((savedArticle) => {
+            res.render('../views/article', {content:savedArticle, user:req.user})
 
+        }).catch(err => {
+            res.status(500).send('count update failed')
+        })
     })
     .catch(err => {
         res.status(500).send(err.message)});
-   
 })
-articleRoute.get('/:email/articles', (req, res) => {
-    const email = req.params.user
+
+articleRoute.get('/:email/user-page', (req, res) => {
     articleModel.find({})
     .then((articles) => {
 console.log(articles)
 // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES BY USER WITH EMAIL ADDRESS THEN RENDER PAGE
-        // res.render('../views/userarticles', {contents:articles, user:req.user})
+        res.render('../views/userarticles', {contents:articles, user:req.user})
     }).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
     })
-   
 })
-
 
 articleRoute.post('/:email/create', (req, res) => {
     const blogDetails = req.body
@@ -47,7 +54,7 @@ articleRoute.post('/:email/create', (req, res) => {
     .then((user) => {
     const {email, firstName, lastName} = user
     const {title, description, body, tags} = blogDetails
-    // function to calculate reading time
+    // calculate reading time
     const wordsPerMinute = 183
     const bodyLength = body.split(' ').length;
     const readingTime = Math.ceil(bodyLength / wordsPerMinute)
@@ -67,6 +74,12 @@ articleRoute.post('/:email/create', (req, res) => {
 articleRoute.get('/:email/create', (req, res) => {
     const userEmail = req.params.email
     res.render('../views/create', {email: userEmail})
+
+})
+
+articleRoute.get('/:email/edit', (req, res) => {
+    const userEmail = req.params.email
+    res.render('../views/edit')
 
 })
 
