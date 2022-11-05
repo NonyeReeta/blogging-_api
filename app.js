@@ -3,33 +3,11 @@ const express = require('express')
 const {connectToDb} = require("./db")
 const authRouter = require("./routes/auth")
 const passport = require('passport')
-// const connectEnsureLogins = require('connect-ensure-login')
 const bodyParser = require('body-parser')
-const session = require('express-session')
 const articleRoute = require('./routes/articles')
 
 const app = express()
 const PORT = process.env.PORT || 8080
-
-
-// app.use(session({
-//     secret: '7861',
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//       secure: true,
-//       maxAge: 3000000 *60
-//     },
-//   }))
-
-
-//   passport.serializeUser(function(user, done) {
-//     done(null, user);
-//   });
-  
-//   passport.deserializeUser(function(user, done) {
-//     done(null, user);
-//   });
 
 
 require('./authentication/auth')
@@ -47,6 +25,8 @@ app.use('articles/search/:arg', passport.authenticate('jwt', { session: false })
 app.use('articles/sort/read_count', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('articles/:email/:title/edit', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('articles/:email/user-page', passport.authenticate('jwt', { session: false }), articleRoute)
+app.use('articles/:email/user-page/draft', passport.authenticate('jwt', { session: false }), articleRoute)
+app.use('articles/:email/user-page/published', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('articles/:email/:title/delete', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('/articles', articleRoute)
 app.use('/articles/:email/state/:title', articleRoute)

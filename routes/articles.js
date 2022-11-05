@@ -4,14 +4,14 @@ const userModel = require('../models/users')
 const articleRoute = express.Router()
 
 articleRoute.get('/', (req, res) => {
-    articleModel.find({}).limit(20).skip(20 * 1)
+    articleModel.find({})
     .then((articles) => {
 // return only published articles
     const publishedArticles = articles.filter((article) => {
         return article.state === 'published'
     }) 
-    // console.log(publishedArticles)
     res.render('../views/index', {contents:publishedArticles, user:req.user})
+    // return res.send(publishedArticles)
     }).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
@@ -49,7 +49,7 @@ articleRoute.get('/search/:arg', (req, res) => {
 })
 
 articleRoute.get('/sort/read_count', (req, res) => {
-    articleModel.find({}).sort({read_count : 1})
+    articleModel.find({}).sort({read_count : -1})
     .then((articles) => {
         res.status(200).send(articles)
     }).catch(err => {
@@ -58,7 +58,7 @@ articleRoute.get('/sort/read_count', (req, res) => {
 })
 
 articleRoute.get('/sort/reading_time', (req, res) => {
-    articleModel.find({}).sort({reading_time : 1})
+    articleModel.find({}).sort({reading_time : -1})
     .then((articles) => {
         res.status(200).send(articles)
     }).catch(err => {
@@ -67,7 +67,7 @@ articleRoute.get('/sort/reading_time', (req, res) => {
 })
 
 articleRoute.get('/sort/timestamp', (req, res) => {
-    articleModel.find({}).sort({timestamp : 1})
+    articleModel.find({}).sort({timestamp : -1})
     .then((articles) => {
         res.status(200).send(articles)
     }).catch(err => {
@@ -77,13 +77,13 @@ articleRoute.get('/sort/timestamp', (req, res) => {
 
 articleRoute.get('/:email/user-page', (req, res) => {
 const userEmail = req.params.email
-    articleModel.find({}).limit(20).skip(20 * 1)
+    articleModel.find({})
     .then((articles) => {
 // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES BY USER WITH EMAIL ADDRESS THEN RENDER PAGE
 const userArticles = articles.filter((article) => {
     return article.email === userEmail
 }) 
-res.render('../views/userarticles', {contents:userArticles})
+res.render('../views/userarticles', {contents:userArticles,  email: userEmail})
     }).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
@@ -91,14 +91,18 @@ res.render('../views/userarticles', {contents:userArticles})
 })
 
 articleRoute.get('/:email/user-page/draft', (req, res) => {
+const userEmail = req.params.email
     const state = 'draft'
         articleModel.find({})
         .then((articles) => {
     // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES STATE
-    const userDraftArticles = articles.filter((article) => {
-        return article.state === state
+    const userArticles = articles.filter((article) => {
+        return article.email === userEmail
     }) 
-    res.render('../views/userarticles', {contents:userDraftArticles})
+    const userDraftArticles = userArticles.filter((articles) => {
+        return articles.state === state
+    }) 
+    res.render('../views/userarticles', {contents:userDraftArticles, email: userEmail})
         }).catch((err) => {
             console.log(err)
             res.status(500).send(err.message)
@@ -106,14 +110,18 @@ articleRoute.get('/:email/user-page/draft', (req, res) => {
     })
 
 articleRoute.get('/:email/user-page/published', (req, res) => {
+const userEmail = req.params.email
         const state = 'published'
             articleModel.find({})
             .then((articles) => {
         // TODO: FILTER ALL ARTICLES AND RETURN ARTICLES STATE
-        const userPublishedArticles = articles.filter((article) => {
+        const userArticles = articles.filter((article) => {
+            return article.email === userEmail
+        })
+        const userPublishedArticles = userArticles.filter((article) => {
             return article.state === state
         }) 
-        res.render('../views/userarticles', {contents:userPublishedArticles})
+        res.render('../views/userarticles', {contents:userPublishedArticles, email: userEmail})
             }).catch((err) => {
                 console.log(err)
                 res.status(500).send(err.message)
@@ -129,6 +137,7 @@ articleRoute.post('/:email/create', (req, res) => {
     .then((user) => {
     const {email, firstName, lastName} = user
     const {title, description, body, tags} = blogDetails
+    console.log(blogDetails)
     // calculate reading time
     const wordsPerMinute = 183
     const bodyLength = body.split(' ').length;
