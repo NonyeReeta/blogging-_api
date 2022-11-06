@@ -30,9 +30,8 @@ app.use('articles/:email/:title/delete', passport.authenticate('jwt', { session:
 app.use('/articles', articleRoute)
 app.use('/articles/:email/state/:title', articleRoute)
 
-
-// app.listen(PORT, () => {
-//     console.log(`server listening on port ${PORT}`)
-// });
+app.listen(PORT, () => {
+    console.log(`server listening on port ${PORT}`)
+});
 
 module.exports = app;
