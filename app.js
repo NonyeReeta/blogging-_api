@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const articleRoute = require('./routes/articles')
 
 const app = express()
-const PORT = 3000/articles
+const PORT = 3000 + '/articles'
 
 
 require('./authentication/auth')
