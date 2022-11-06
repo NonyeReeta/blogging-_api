@@ -82,7 +82,7 @@ const loginResponse = await request(app)
 const token = loginResponse.body.token
 const response = await request(app).get(`/articles/${testUser.email}/user-page?secret_token=${token}`).set('content-type', 'application/json')
 expect(response.status).toBe(200)
-})
+}, 20000)
 
 it('should return all draft articles by logged in user', async () => {
   const testUser = {
@@ -100,7 +100,7 @@ const loginResponse = await request(app)
 const token = loginResponse.body.token
 const response = await request(app).get(`/articles/${testUser.email}/user-page/draft/?secret_token=${token}`).set('content-type', 'application/json')
 expect(response.status).toBe(200)
-})
+}, 20000)
 
 it('should return all published articles by logged in user', async () => {
   const testUser = {
@@ -118,58 +118,9 @@ const loginResponse = await request(app)
 const token = loginResponse.body.token
 const response = await request(app).get(`/articles/${testUser.email}/user-page/published/?secret_token=${token}`).set('content-type', 'application/json')
 expect(response.status).toBe(200)
-})
+}, 20000)
 
-// it('logged user should be able to create an article', async () => {
-//   const testUser = {
-//     email: 'testemail@email.com',
-//     password: '12345'
-// };
-// const user = await userModel.findOne({email: testUser.email});
-// const loginResponse = await request(app)
-// .post('/login')
-// .set('content-type', 'application/json')
-// .send({
-//     email: user.email,
-//     password: testUser.password
-// });
-// const token = loginResponse.body.token
-
-// const response = await request(app).post(`/articles/${testUser.email}/create?secret_token=${token}`).set('content-type', 'application/json').send({
-//   tags: "python, data analysis",
-//   description: 'Duis at fermentum nulla. Nunc mollis enim porttitor est porttitor, vitae pulvinar elit mollis. ',
-//   body: 'Curabitur ac tristique tortor, ac ornare neque. Mauris fringilla a ante et mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur bibendum, nibh vel sollicitudin tincidunt, ex felis lacinia mauris, eget dignissim quam lorem ut libero. Etiam placerat nulla sed laoreet accumsan. Cras quis dapibus ligula. Fusce lectus enim, auctor a posuere a, tempus at justo. Cras vel molestie enim. Pellentesque sodales eget dolor sed convallis. In ornare id lorem in convallis. Maecenas ultrices semper quam. Vivamus sed leo vel ante feugiat aliquam ut ut metus.',
-//   title: 'vitae.',
-// })
-// expect(response.status).toBe(200)
-// }, 20000)
-
-// it('should edit an article', async () => {
-//   const testTitle = 'Python'
-//  const newArticle = {
-//   description: 'Duis at fermentum nulla. Nunc mollis enim porttitor est porttitor',
-//   body: 'aaDuis at fermentum nulla. Nunc mollis enim porttitor est porttitor',
-//   tags: 'tag1 rag2'
-//  }
-//   const testUser = {
-//     email: 'testemail@email.com',
-//     password: '12345'
-// };
-// const user = await userModel.findOne({email: testUser.email});
-// const loginResponse = await request(app)
-// .post('/login')
-// .set('content-type', 'application/json')
-// .send({
-//     email: user.email,
-//     password: testUser.password
-// });
-// const token = loginResponse.body.token
-
-// const response = await request(app).post(`/articles/${testUser.email}/${testTitle}/edit?secret_token=${token}`).set('content-type', 'application/json').send({newArticle})
-// expect(response.status).toBe(200)
-// }, 20000)
-
-it('should delete an article', async () => {
+it('logged user should be able to create an article', async () => {
   const testUser = {
     email: 'testemail@email.com',
     password: '12345'
@@ -184,11 +135,58 @@ const loginResponse = await request(app)
 });
 const token = loginResponse.body.token
 
-const response = await request(app).delete(`/articles/${testUser.email}/python/delete?secret_token=${token}`).set('content-type', 'application/json').send('New title')
+const response = await request(app).post(`/articles/${testUser.email}/create/?secret_token=${token}`).set('content-type', 'application/json').send({
+  tags: "python, data analysis",
+  description: 'Duis at fermentum nulla. Nunc mollis enim porttitor est porttitor, vitae pulvinar elit mollis. ',
+  body: 'Curabitur ac tristique tortor, ac ornare neque. Mauris fringilla a ante et mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur bibendum, nibh vel sollicitudin tincidunt, ex felis lacinia mauris, eget dignissim quam lorem ut libero. Etiam placerat nulla sed laoreet accumsan. Cras quis dapibus ligula. Fusce lectus enim, auctor a posuere a, tempus at justo. Cras vel molestie enim. Pellentesque sodales eget dolor sed convallis. In ornare id lorem in convallis. Maecenas ultrices semper quam. Vivamus sed leo vel ante feugiat aliquam ut ut metus.',
+  title: 'Test1',
+})
+expect(response.status).toBe(200)
+}, 60000)
+
+it('should edit an article', async () => {
+  const testTitle = 'Test1'
+ const newArticle = {
+  title: testTitle,
+  description: 'Duis at fermentum nulla. Nunc mollis enim porttitor est porttitor',
+  body: 'aaDuis at fermentum nulla. Nunc mollis enim porttitor est porttitor',
+  tags: 'tag1 rag2'
+ }
+  const testUser = {
+    email: 'testemail@email.com',
+    password: '12345'
+};
+const user = await userModel.findOne({email: testUser.email});
+const loginResponse = await request(app)
+.post('/login')
+.set('content-type', 'application/json')
+.send({
+    email: user.email,
+    password: testUser.password
+});
+const token = loginResponse.body.token
+
+const response = await request(app).put(`/articles/${testUser.email}/${testTitle}/edit/?secret_token=${token}`).set('content-type', 'application/json').send(newArticle)
 expect(response.status).toBe(200)
 }, 20000)
 
+it('should delete an article', async () => {
+  const testUser = {
+    email: 'testemail@email.com',
+    password: '12345'
+};
+  const user = await userModel.findOne({email: testUser.email});  
+  const loginResponse = await request(app)
+  .post('/login')
+  .set('content-type', 'application/json')
+  .send({
+      email: user.email,
+      password: testUser.password
+  });
+  const token = loginResponse.body.token
+
+  const response = await request(app).delete(`/articles/${testUser.email}/Test1/delete/?secret_token=${token}`).set('content-type', 'application/json')
+  expect(response.status).toBe(200)
+  }, 20000)
+
 })
-
-
-

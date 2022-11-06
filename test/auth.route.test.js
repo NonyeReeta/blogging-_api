@@ -10,19 +10,20 @@ describe('Auth', () => {
         connectToDb()
     })
 
-    // it('signup a new user', async () => {
+    it('signup a new user', async () => {
         
-    //     const response = await request(app).post('/signup').set('content-type', 'application/json').send({
-    //         email: 'name@email.com',
-    //         firstName: "test",
-    //         lastName: "Name",
-    //         password: '12345'
-    //     });
-    //     console.log(response.body);
-
-    //     expect(response.status).toBe(201);
+        const response = await request(app).post('/signup').send({
+            // using a new email before each test since email is unique
+            email: 'testsix@email.com', // next email value = testseven@email.com',
+            firstName: "Test",
+            lastName: "Name",
+            password: '12345'
+        });
+        console.log(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('token');
         
-    // }, 20000)
+    }, 20000)
 
     it('POST /login works', async () => {
         const testUser = {
@@ -30,7 +31,6 @@ describe('Auth', () => {
             password: '12345'
         };
         const user = await userModel.findOne({email: testUser.email});
-        console.log(user)
         const response = await request(app)
         .post('/login')
         .set('content-type', 'application/json')

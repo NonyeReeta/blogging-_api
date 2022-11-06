@@ -10,6 +10,7 @@ const userModel = require('../models/users')
 authRouter.post(
     '/signup',
     passport.authenticate('signup', { session: false }), async (req, res, next) => {
+        console.log(req.body)
         // res.json({
         //     message: 'Signup successful',
         //     user: req.user
@@ -25,7 +26,6 @@ authRouter.post(
     '/login',
     async (req, res, next) => {
         passport.authenticate('login', async (err, user, info) => {
-           console.log(user)
             try {
 
                 req.login(user, { session: false },

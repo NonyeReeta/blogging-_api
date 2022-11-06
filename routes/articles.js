@@ -2,6 +2,7 @@ const express = require('express')
 const articleModel = require('../models/articles')
 const userModel = require('../models/users')
 const articleRoute = express.Router()
+const bodyParser = require('body-parser')
 
 articleRoute.get('/', (req, res) => {
     articleModel.find({})
@@ -45,7 +46,7 @@ articleRoute.get('/article/:title', (req, res) => {
 
 articleRoute.get('/search/:arg', (req, res) => {
     const arg = req.params.arg
-    articleModel.find({$text: {$search: arg}})
+    articleModel.findOne({$text: {$search: arg}})
     .then((article) => {
         if(article.state === 'published') {
             return res.send(article)
@@ -149,9 +150,9 @@ const userEmail = req.params.email
 
 
 
+
 articleRoute.post('/:email/create', (req, res) => {
     const blogDetails = req.body
-    console.log(blogDetails)
     const user = req.params.email
     userModel.findOne({email: user})
     .then((user) => {
@@ -174,46 +175,27 @@ return res.status(200).send('article created successfully')
 })
 
 
-articleRoute.post('/:email/:title/edit', (req, res) => {
+articleRoute.put('/:email/:title/edit', (req, res) => {
 // console.log('got to edit post')
 const title = req.params.title
 
-articleModel.findOne({title: title})
-    .then((article) =>{
-        article.title = req.body.title
-        article.description = req.body.description
-        article.body = req.body.body
-        article.tags = req.body.tags
-        article.save()
-        .then((updatedArticle) => {
-          return res.status(200).send({content:updatedArticle, user:req.user})
+articleModel.findOneAndUpdate({title: title}, {title: req.body.title, description: req.body.description, body: req.body.body, tags: req.body.tags}, { multi: true })
+.then((article) => {
+    return res.status(200).send(article)
+}).catch(err => {res.status(500).send(err.message)});
 
-        }).catch(err => {
-            res.status(500).send(err.message)
-        })
-    })
-    .catch(err => {
-        res.status(500).send(err.message)});
 });
 
-articleRoute.get('/:email/state/:title', (req, res) => {
+articleRoute.put('/:email/state/:title', (req, res) => {
     const title = req.params.title
-    // console.log('got to state')
-    articleModel.findOne({title: title})
-    .then((article) =>{
-        article.state = "published"
-        article.save()
-        .then((savedArticle) => {
-            res.render('../views/article', {content:savedArticle, user:req.user})
-        }).catch(err => {
-            res.status(500).send('count update failed')
-        })
-    })
-    .catch(err => {
-        res.status(500).send(err.message)});
+    articleModel.findOneAndUpdate({title: title}, {state: 'published'})
+    .then((article) => {
+    return res.status(200).send(article)
+    }).catch(err => {res.status(500).send(err.message)});
+    
 })
 
-articleRoute.get('/:email/:title/delete', (req, res) => {
+articleRoute.delete('/:email/:title/delete', (req, res) => {
     const title = req.params.title
     articleModel.findOneAndDelete({title: title})
     .then(() =>{
