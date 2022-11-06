@@ -14,7 +14,7 @@ describe('Auth', () => {
         
         const response = await request(app).post('/signup').send({
             // using a new email before each test since email is unique
-            email: 'testsix@email.com', // next email value = testseven@email.com',
+            email: 'testseven@email.com', // next email value = testeight@email.com',
             firstName: "Test",
             lastName: "Name",
             password: '12345'
