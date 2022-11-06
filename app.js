@@ -18,7 +18,7 @@ connectToDb()
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', authRouter);
+// app.use('/', authRouter);
 app.use('articles/:email/create', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('articles/search/:arg', passport.authenticate('jwt', { session: false }), articleRoute)
 app.use('articles/sort/read_count', passport.authenticate('jwt', { session: false }), articleRoute)
