@@ -4,15 +4,16 @@ This project serves as the second semester **exam** for [Alt School's](altschool
 
 ## GETTING STARTED
 
-* Clone the repository into your local environment
-* Run `npm install` to install all dependencies
+* Clone the repository into your local environment.
+* Run `npm install` to install all dependencies.
 * Create a .env file
     * Add the following variables
         * DB_URL = `Mongo db url`
         * PORT = 3000
         * JWT_SECRET = `add a random text here`.
-* Run `node app.js` to get the project running
-* The Entry point for the api is localhost:3000/articles
+* Add .env to gitignore
+* Run `node app.js` to get the project running.
+* The Entry point for the api is localhost:3000/articles.
 
 ## END POINTS
 
