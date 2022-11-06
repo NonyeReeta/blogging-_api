@@ -11,6 +11,7 @@ This project serves as the second semester **exam** for [Alt School's](altschool
         * DB_URL = `Mongo db url`
         * PORT = 3000
         * JWT_SECRET = `add a random text here`.
+* Run `node app.js` to get the project running
 * The Entry point for the api is localhost:3000/articles
 
 ## END POINTS
