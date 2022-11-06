@@ -1,45 +1,46 @@
-const supertest = require('supertest')
-const authRoute = require('../routes/auth')
+const request = require('supertest')
 const userModel = require('../models/users')
-const {connectToDb} = require("../db");
-
-// afterEach(() => {
-// jest.useRealTimers();
-
-// })
-
-beforeAll(async () => {
-    // Connect to a Mongo DB
-connectToDb()
-  });
-
-jest.useFakeTimers();
+const app = require('../app')
+const {connectToDb} = require('../db')
 
 
-describe("POST /login", () => {
+
+describe('Auth', () => {
+    beforeAll( () => {
+        connectToDb()
+    })
+
+    // it('signup a new user', async () => {
+        
+    //     const response = await request(app).post('/signup').set('content-type', 'application/json').send({
+    //         email: 'name@email.com',
+    //         firstName: "test",
+    //         lastName: "Name",
+    //         password: '12345'
+    //     });
+    //     console.log(response.body);
+
+    //     expect(response.status).toBe(201);
+        
+    // }, 20000)
+
     it('POST /login works', async () => {
         const testUser = {
-            email: 'test@email.com',
+            email: 'testemail@email.com',
             password: '12345'
         };
-        const response = await supertest(authRoute).post('/login').send(testUser);
-        const user = await userModel.findOne({email: testUser.email})
-        expect(user.email).to.equal('test@email.com')
-        expect(user.password).toBeTruthy()
-    })
+        const user = await userModel.findOne({email: testUser.email});
+        console.log(user)
+        const response = await request(app)
+        .post('/login')
+        .set('content-type', 'application/json')
+        .send({
+            email: user.email,
+            password: testUser.password
+        });
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('token')
 
-    it('POST /signup works', async () => {
-        const testUser = {
-            email: 'test@email.com',
-            firstname: "test",
-            lastname: "Name",
-            password: '12345'
-        };
-        const response = await supertest(authRoute).post('/signup').send(testUser);
-        const user = await userModel.findOne({email: testUser.email})
-        expect(response.status).toBe(200);
-        expect(response.body.email).toBe('test@email.com');
-        done()
+    }, 20000)
     
-    })
 })

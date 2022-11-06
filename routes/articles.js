@@ -10,8 +10,8 @@ articleRoute.get('/', (req, res) => {
     const publishedArticles = articles.filter((article) => {
         return article.state === 'published'
     }) 
-    res.render('../views/index', {contents:publishedArticles, user:req.user})
-    // return res.send(publishedArticles)
+    // res.render('../views/index', {contents:publishedArticles, user:req.user})
+    return res.send(publishedArticles)
     }).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
@@ -28,8 +28,13 @@ articleRoute.get('/article/:title', (req, res) => {
         article.read_count = newReadCount
         article.save()
         .then((savedArticle) => {
-            res.render('../views/article', {content:savedArticle, user:req.user})
-
+            // res.render('../views/article', {content:savedArticle, user:req.user})
+            if(savedArticle.state === 'published') {
+                return res.send(savedArticle)
+            }
+            else {
+                return res.send('The article does not exist or has not been published by the author')
+            }
         }).catch(err => {
             res.status(500).send('count update failed')
         })
@@ -41,8 +46,13 @@ articleRoute.get('/article/:title', (req, res) => {
 articleRoute.get('/search/:arg', (req, res) => {
     const arg = req.params.arg
     articleModel.find({$text: {$search: arg}})
-    .then((articles) => {
-        res.status(200).send(articles)
+    .then((article) => {
+        if(article.state === 'published') {
+            return res.send(article)
+        }
+        else {
+            return res.send('The article does not exist or has not been published by the author')
+        }
     }).catch(err => {
         res.status(500).send(err.message)
     })
@@ -51,7 +61,10 @@ articleRoute.get('/search/:arg', (req, res) => {
 articleRoute.get('/sort/read_count', (req, res) => {
     articleModel.find({}).sort({read_count : -1})
     .then((articles) => {
-        res.status(200).send(articles)
+        const publishedArticles = articles.filter((article) => {
+            return article.state === 'published'
+        }) 
+        res.status(200).send(publishedArticles)
     }).catch(err => {
         res.status(500).send(err.message)
     })
@@ -60,7 +73,10 @@ articleRoute.get('/sort/read_count', (req, res) => {
 articleRoute.get('/sort/reading_time', (req, res) => {
     articleModel.find({}).sort({reading_time : -1})
     .then((articles) => {
-        res.status(200).send(articles)
+        const publishedArticles = articles.filter((article) => {
+            return article.state === 'published'
+        }) 
+        res.status(200).send(publishedArticles)
     }).catch(err => {
         res.status(500).send(err.message)
     })
@@ -69,7 +85,10 @@ articleRoute.get('/sort/reading_time', (req, res) => {
 articleRoute.get('/sort/timestamp', (req, res) => {
     articleModel.find({}).sort({timestamp : -1})
     .then((articles) => {
-        res.status(200).send(articles)
+        const publishedArticles = articles.filter((article) => {
+            return article.state === 'published'
+        }) 
+        res.status(200).send(publishedArticles)
     }).catch(err => {
         res.status(500).send(err.message)
     })
@@ -83,8 +102,8 @@ const userEmail = req.params.email
 const userArticles = articles.filter((article) => {
     return article.email === userEmail
 }) 
-res.render('../views/userarticles', {contents:userArticles,  email: userEmail})
-    }).catch((err) => {
+    return res.status(200).send(userArticles)
+}).catch((err) => {
         console.log(err)
         res.status(500).send(err.message)
     })
@@ -102,7 +121,7 @@ const userEmail = req.params.email
     const userDraftArticles = userArticles.filter((articles) => {
         return articles.state === state
     }) 
-    res.render('../views/userarticles', {contents:userDraftArticles, email: userEmail})
+    return res.status(200).send(userDraftArticles)
         }).catch((err) => {
             console.log(err)
             res.status(500).send(err.message)
@@ -121,23 +140,24 @@ const userEmail = req.params.email
         const userPublishedArticles = userArticles.filter((article) => {
             return article.state === state
         }) 
-        res.render('../views/userarticles', {contents:userPublishedArticles, email: userEmail})
-            }).catch((err) => {
+        return res.status(200).send(userPublishedArticles)
+    }).catch((err) => {
                 console.log(err)
                 res.status(500).send(err.message)
-            })
         })
+})
 
 
 
 articleRoute.post('/:email/create', (req, res) => {
     const blogDetails = req.body
+    console.log(blogDetails)
     const user = req.params.email
     userModel.findOne({email: user})
     .then((user) => {
     const {email, firstName, lastName} = user
     const {title, description, body, tags} = blogDetails
-    console.log(blogDetails)
+    
     // calculate reading time
     const wordsPerMinute = 183
     const bodyLength = body.split(' ').length;
@@ -145,30 +165,14 @@ articleRoute.post('/:email/create', (req, res) => {
 
     articleModel.create({email: email, tags: tags, author: firstName + ' ' + lastName, description: description, body: body, title: title, reading_time: readingTime})
     .then(() => {
-// TODO: RENDER INDEX FOR NOW BUT IT SHOULD ROUTE TP USER RTICLES PAGE
-       res.status(200).send('Article created successfully')
-    }).catch((err) => {
-        res.status(500).send(err.message)
+return res.status(200).send('article created successfully')
+
+    }).catch(err => {
+        res.status(500)
     })
-    }).catch((err) => {
-        res.status(500).send(err.message)
-    });
+    })
 })
 
-articleRoute.get('/:email/create', (req, res) => {
-    const userEmail = req.params.email
-    res.render('../views/create', {email: userEmail})
-
-})
-
-articleRoute.get('/:email/:title/edit', (req, res) => {
-    const title = req.params.title
-articleModel.findOne({title: title})
-.then((article) => {
-    res.render('../views/edit', {content:article})
-})
-.catch(err => res.status(500).send(err.message))
-})
 
 articleRoute.post('/:email/:title/edit', (req, res) => {
 // console.log('got to edit post')
@@ -182,10 +186,10 @@ articleModel.findOne({title: title})
         article.tags = req.body.tags
         article.save()
         .then((updatedArticle) => {
-            res.render('../views/article', {content:updatedArticle, user:req.user})
+          return res.status(200).send({content:updatedArticle, user:req.user})
 
         }).catch(err => {
-            res.status(500).send(err.message,'count update failed')
+            res.status(500).send(err.message)
         })
     })
     .catch(err => {

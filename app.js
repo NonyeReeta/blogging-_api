@@ -31,24 +31,26 @@ app.use('articles/:email/:title/delete', passport.authenticate('jwt', { session:
 app.use('/articles', articleRoute)
 app.use('/articles/:email/state/:title', articleRoute)
 
-app.set('views', 'views');
-app.set('view engine', 'ejs');
+// app.set('views', 'views');
+// app.set('view engine', 'ejs');
 
-// renders the login page
-app.get('/login', (req, res) => {
-    res.render('login');
-});
+// // renders the login page
+// app.get('/login', (req, res) => {
+//     res.render('login');
+// });
 
-// renders the signup page
-app.get('/signup', (req, res) => {
-    res.render('signup');
-});
-// render home page
-app.get('/', (req, res) => {
-    res.render('home')
-})
+// // renders the signup page
+// app.get('/signup', (req, res) => {
+//     res.render('signup');
+// });
+// // render home page
+// app.get('/', (req, res) => {
+//     res.render('home')
+// })
 
 
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`)
 });
+
+module.exports = app;
