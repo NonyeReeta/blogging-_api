@@ -5,9 +5,16 @@ const authRouter = require("./routes/auth")
 const passport = require('passport')
 const bodyParser = require('body-parser')
 const articleRoute = require('./routes/articles')
+// importing cors
+const cors = require('cors')
 
 const app = express()
 const PORT = 3000
+
+// TO HANDLE CORS ERROR
+app.use(cors({
+    origin: 'http://localhost:4200'
+}))
 
 
 require('./authentication/auth')
