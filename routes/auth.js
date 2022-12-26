@@ -37,7 +37,7 @@ authRouter.post(
                             // You then sign the token with a secret or key (JWT_SECRET), and send back the token to the user.
                             // DO NOT STORE PASSWORDS IN THE JWT!
                             let token = jwt.sign({ user: body }, process.env.JWT_SECRET, {expiresIn: '3600s'});
-                            return next(res.json({ token }));              
+                            return next(res.json({ token, user }));              
                     }
                 )}
                 if (err) {
@@ -45,7 +45,7 @@ authRouter.post(
                 }
                 if (!user) {
                     // const error = new Error('Username or password is incorrect');
-                    return next(res.json({ error: 'Username or password is incorrect'}));
+                    return next(res.json({ error: 'Email or password is incorrect'}));
                 }
 
                
