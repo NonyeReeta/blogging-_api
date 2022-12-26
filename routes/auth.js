@@ -27,19 +27,19 @@ authRouter.post(
     async (req, res, next) => {
         passport.authenticate('login', async (err, user, info) => {
             try {
+                // console.log(info)
+                if(user){
                 req.login(user, { session: false },
                     async (error) => {
                         if (error) return next(error);
-                        if(user){
                             const body = { _id: user._id, email: user.email };
                             //You store the id and email in the payload of the JWT. 
                             // You then sign the token with a secret or key (JWT_SECRET), and send back the token to the user.
                             // DO NOT STORE PASSWORDS IN THE JWT!
                             let token = jwt.sign({ user: body }, process.env.JWT_SECRET, {expiresIn: '3600s'});
                             return next(res.json({ token }));              
-                        }
                     }
-                );
+                )}
                 if (err) {
                     return next(err);
                 }
