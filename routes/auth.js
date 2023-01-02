@@ -8,10 +8,10 @@ const authRouter = express.Router();
 authRouter.post(
     '/signup',
     passport.authenticate('signup', { session: false }), async (req, res, next) => {
-        console.log(req.body)
-        const user = { _id: req.user._id, email: req.user.email };
-        let token = jwt.sign({ user: user }, process.env.JWT_SECRET, {expiresIn: '3600s'});
-        return res.json({ token, user})
+        const user = req.body
+        const body = { _id: req.body._id, email: req.body.email };
+        let token = jwt.sign({ user: body }, process.env.JWT_SECRET, {expiresIn: '3600s'});
+        return res.json({token, user})
 
     }
 );
@@ -30,7 +30,7 @@ authRouter.post(
                             // You then sign the token with a secret or key (JWT_SECRET), and send back the token to the user.
                             // DO NOT STORE PASSWORDS IN THE JWT!
                             let token = jwt.sign({ user: body }, process.env.JWT_SECRET, {expiresIn: '3600s'});
-                            return next(res.json({ token, user }));              
+                            return next(res.json({...token, user }));              
                     }
                 )}
                 if (err) {

@@ -11,7 +11,6 @@ articleRoute.get('/', (req, res) => {
     const publishedArticles = articles.filter((article) => {
         return article.state === 'published'
     }) 
-    // res.render('../views/index', {contents:publishedArticles, user:req.user})
     return res.send(publishedArticles)
     }).catch((err) => {
         console.log(err)
@@ -29,7 +28,6 @@ articleRoute.get('/article/:title', (req, res) => {
         article.read_count = newReadCount
         article.save()
         .then((savedArticle) => {
-            // res.render('../views/article', {content:savedArticle, user:req.user})
             if(savedArticle.state === 'published') {
                 return res.send(savedArticle)
             }
