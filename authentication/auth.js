@@ -31,17 +31,19 @@ passport.use(
         {
             usernameField: 'email',
             passwordField: 'password',
-            passReqToCallback: true
+            passReqToCallback: true,
         }, 
         async (req, email, password, done) => {
             const firstName = req.body.firstName; 
-            const lastName = req.body.lastName;               
-            try {
-                const user = await UserModel.create({ email, firstName, lastName, password });
-                return done(null, user);
-            } catch (error) {
-                done(error);
-        }}
+            const lastName = req.body.lastName;  
+                try {
+                    const user = await UserModel.create({ email, firstName, lastName, password });
+                    return done(null, user);
+                } catch (error) {
+                    done(error.message);
+            }
+            
+          }
     )
 );
 
