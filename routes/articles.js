@@ -18,6 +18,22 @@ articleRoute.get('/', (req, res) => {
     })
 })
 
+// articleRoute.get('/', async (req, res) => {
+//     // return only published articles
+//     const {page, numberPerPage} = req.query
+//         articleModel.find({state: 'published'})
+//         .skip((page - 1) * numberPerPage)
+//         .limit(numberPerPage)
+//         .then(articles => {
+//         res.status(200).send(articles)
+//     })
+// .catch( (err) => {
+//       console.log(JSON.stringify(err))
+//       res.status(500).send(err.message)
+//     })
+//   })
+
+
 articleRoute.get('/article/:title', (req, res) => {
     const title = req.params.title
     // FIND, UPDATE AND RETURN ARTICLE WITH TITLE
@@ -164,19 +180,16 @@ articleRoute.post('/:email/create', (req, res) => {
 
     articleModel.create({email: email, tags: tags, author: firstName + ' ' + lastName, description: description, body: body, title: title, reading_time: readingTime})
     .then(() => {
-return res.status(200).send('article created successfully')
-
+        return res.status(200).send('article created successfully')
     }).catch(err => {
-        res.status(500)
+        res.status(500).send(`Article titled '${title}' already exist`)
     })
     })
 })
 
 
 articleRoute.put('/:email/:title/edit', (req, res) => {
-// console.log('got to edit post')
-const title = req.params.title
-
+const title = req.params.title;
 articleModel.findOneAndUpdate({title: title}, {title: req.body.title, description: req.body.description, body: req.body.body, tags: req.body.tags}, { multi: true })
 .then((article) => {
     return res.status(200).send(article)
