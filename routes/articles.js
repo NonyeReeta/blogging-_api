@@ -180,7 +180,7 @@ articleRoute.post('/:email/create', (req, res) => {
 
     articleModel.create({email: email, tags: tags, author: firstName + ' ' + lastName, description: description, body: body, title: title, reading_time: readingTime})
     .then(() => {
-        res.status(200).send('article created successfull')
+        return res.status(200)
     }).catch(err => {
         res.status(500).send(`Article titled '${title}' already exist`)
     })
