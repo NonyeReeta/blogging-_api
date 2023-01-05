@@ -191,9 +191,10 @@ articleRoute.post('/:email/create', (req, res) => {
 articleRoute.put('/:email/:title/edit', (req, res) => {
 const title = req.params.title;
 articleModel.findOneAndUpdate({title: title}, {title: req.body.title, description: req.body.description, body: req.body.body, tags: req.body.tags}, { multi: true })
-.then((article) => {
-    return res.status(200).send(article)
-}).catch(err => {res.status(500).send(err.message)});
+.then(() => {
+    return res.json({message: 'Success'})
+}).catch(err => res.status(500).send(`Article titled '${title}' already exist`)
+);
 
 });
 
