@@ -35,7 +35,7 @@ articleRoute.get('/', (req, res) => {
 
 articleRoute.get('/article/:title', (req, res) => {
     const title = req.params.title
-    // FIND AND RETURN ARTICLE WITH TITLE
+    // FIND, INCREASE READ COUNT AND RETURN ARTICLE WITH TITLE
     articleModel.findOne({title: title})
     .then((article) =>{
         const currentReadCount = article.read_count
@@ -58,12 +58,12 @@ articleRoute.get('/article/:title', (req, res) => {
 })
 
 // ROUTE TO RETURN ARTICLE FOR EDIT PURPOSE
-articleRoute.get('/editArticle/:title', (req, res) => {
+articleRoute.get('/editarticle/:title', (req, res) => {
     const title = req.params.title
     // FIND AND RETURN ARTICLE WITH TITLE
     articleModel.findOne({title: title})
     .then((article) =>{
-        res.send(200).send(article)
+        return res.send(article)        
     })
     .catch(err => {
         res.status(500).send(err.message)});
