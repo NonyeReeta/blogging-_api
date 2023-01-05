@@ -33,10 +33,9 @@ articleRoute.get('/', (req, res) => {
 //     })
 //   })
 
-
 articleRoute.get('/article/:title', (req, res) => {
     const title = req.params.title
-    // FIND, UPDATE AND RETURN ARTICLE WITH TITLE
+    // FIND AND RETURN ARTICLE WITH TITLE
     articleModel.findOne({title: title})
     .then((article) =>{
         const currentReadCount = article.read_count
@@ -53,6 +52,18 @@ articleRoute.get('/article/:title', (req, res) => {
         }).catch(err => {
             res.status(500).send('count update failed')
         })
+    })
+    .catch(err => {
+        res.status(500).send(err.message)});
+})
+
+// ROUTE TO RETURN ARTICLE FOR EDIT PURPOSE
+articleRoute.get('/editArticle/:title', (req, res) => {
+    const title = req.params.title
+    // FIND AND RETURN ARTICLE WITH TITLE
+    articleModel.findOne({title: title})
+    .then((article) =>{
+        res.send(200).send(article)
     })
     .catch(err => {
         res.status(500).send(err.message)});
