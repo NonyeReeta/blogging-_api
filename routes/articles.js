@@ -222,7 +222,7 @@ articleRoute.delete('/:email/:title/delete', (req, res) => {
     const title = req.params.title
     articleModel.findOneAndDelete({title: title})
     .then(() =>{
-        res.status(200).send("delete successful")
+        return res.json({message: 'Delete Successfull'})
     })
     .catch(err => {
         res.status(500).send(err.message)});
