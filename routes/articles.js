@@ -4,34 +4,34 @@ const userModel = require('../models/users')
 const articleRoute = express.Router()
 const bodyParser = require('body-parser')
 
-articleRoute.get('/', (req, res) => {
-    articleModel.find({})
-    .then((articles) => {
-// return only published articles
-    const publishedArticles = articles.filter((article) => {
-        return article.state === 'published'
-    }) 
-    return res.send(publishedArticles)
-    }).catch((err) => {
-        console.log(err)
-        res.status(500).send(err.message)
-    })
-})
+// articleRoute.get('/', (req, res) => {
+//     articleModel.find({})
+//     .then((articles) => {
+// // return only published articles
+//     const publishedArticles = articles.filter((article) => {
+//         return article.state === 'published'
+//     }) 
+//     return res.send(publishedArticles)
+//     }).catch((err) => {
+//         console.log(err)
+//         res.status(500).send(err.message)
+//     })
+// })
 
-// articleRoute.get('/', async (req, res) => {
-//     // return only published articles
-//     const {page, numberPerPage} = req.query
-//         articleModel.find({state: 'published'})
-//         .skip((page - 1) * numberPerPage)
-//         .limit(numberPerPage)
-//         .then(articles => {
-//         res.status(200).send(articles)
-//     })
-// .catch( (err) => {
-//       console.log(JSON.stringify(err))
-//       res.status(500).send(err.message)
-//     })
-//   })
+articleRoute.get('/', async (req, res) => {
+    // return only published articles
+    const {page, numberPerPage} = req.body
+        articleModel.find({state: 'published'})
+        .skip((page - 1) * numberPerPage)
+        .limit(numberPerPage)
+        .then(articles => {
+        res.status(200).send(articles)
+    })
+.catch( (err) => {
+      console.log(JSON.stringify(err))
+      res.status(500).send(err.message)
+    })
+  })
 
 articleRoute.get('/article/:title', (req, res) => {
     const title = req.params.title
