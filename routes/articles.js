@@ -25,10 +25,9 @@ articleRoute.get('/', async (req, res) => {
         .skip((page - 1) * numberPerPage)
         .limit(numberPerPage)
         .then(articles => {
-        res.status(200).send(articles)
+        res.send(articles)
     })
 .catch( (err) => {
-      console.log(JSON.stringify(err))
       res.status(500).send(err.message)
     })
   })
