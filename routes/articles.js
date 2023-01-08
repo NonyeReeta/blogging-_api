@@ -20,7 +20,7 @@ const bodyParser = require('body-parser')
 
 articleRoute.get('/', async (req, res) => {
     // return only published articles
-    const {page, numberPerPage} = req.body
+    const {page, numberPerPage} = req.query
         articleModel.find({state: 'published'})
         .skip((page - 1) * numberPerPage)
         .limit(numberPerPage)
