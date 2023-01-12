@@ -2,28 +2,13 @@ const express = require('express')
 const articleModel = require('../models/articles')
 const userModel = require('../models/users')
 const articleRoute = express.Router()
-const bodyParser = require('body-parser')
-
-// articleRoute.get('/', (req, res) => {
-//     articleModel.find({})
-//     .then((articles) => {
-// // return only published articles
-//     const publishedArticles = articles.filter((article) => {
-//         return article.state === 'published'
-//     }) 
-//     return res.send(publishedArticles)
-//     }).catch((err) => {
-//         console.log(err)
-//         res.status(500).send(err.message)
-//     })
-// })
-
+      
 articleRoute.get('/', async (req, res) => {
     // return only published articles
-    const {page, numberPerPage} = req.query
+    const {page} = req.query
         articleModel.find({state: 'published'})
-        .skip((page - 1) * numberPerPage)
-        .limit(numberPerPage)
+        .skip((page - 1) * 10)
+        .limit(10)
         .then(articles => {
         res.send(articles)
     })
