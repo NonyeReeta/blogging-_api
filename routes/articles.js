@@ -22,9 +22,7 @@ articleRoute.get('/article/:title', (req, res) => {
     // FIND, INCREASE READ COUNT AND RETURN ARTICLE WITH TITLE
     articleModel.findOne({title: title})
     .then((article) =>{
-        const currentReadCount = article.read_count
-        const newReadCount = currentReadCount + 1
-        article.read_count = newReadCount
+        article.read_count++;
         article.save()
         .then((savedArticle) => {
             if(savedArticle.state === 'published') {
@@ -157,9 +155,6 @@ const userEmail = req.params.email
         })
 })
 
-
-
-
 articleRoute.post('/:email/create', (req, res) => {
     const blogDetails = req.body
     const user = req.params.email
@@ -182,16 +177,19 @@ articleRoute.post('/:email/create', (req, res) => {
     })
 })
 
-
 articleRoute.put('/:email/:title/edit', (req, res) => {
-const title = req.params.title;
-articleModel.findOneAndUpdate({title: title}, {title: req.body.title, description: req.body.description, body: req.body.body, tags: req.body.tags}, { multi: true })
-.then(() => {
-    return res.json({message: 'Success'})
-}).catch(err => res.status(500).send(`Article titled '${title}' already exist`)
-);
+    const title = req.params.title;
+    const wordsPerMinute = 183
+    const bodyLength = req.body.body.split(' ').length;
+    const readingTime = Math.ceil(bodyLength / wordsPerMinute)
+    articleModel.findOneAndUpdate({title: title}, {title: req.body.title, description: req.body.description, body: req.body.body, tags: req.body.tags, reading_time: readingTime}, { multi: true })
+    .then(() => {
+        return res.json({message: 'Success'})
+    }).catch(err => res.status(500).send(`Article titled '${title}' already exist`)
+    );
+    
+    });
 
-});
 
 articleRoute.put('/:email/state/:title', (req, res) => {
     const title = req.params.title
@@ -199,7 +197,6 @@ articleRoute.put('/:email/state/:title', (req, res) => {
     .then((article) => {
     return res.status(200).send(article)
     }).catch(err => {res.status(500).send(err.message)});
-    
 })
 
 articleRoute.delete('/:email/:title/delete', (req, res) => {
